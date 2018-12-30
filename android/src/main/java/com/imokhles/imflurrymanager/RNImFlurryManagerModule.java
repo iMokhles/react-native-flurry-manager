@@ -21,8 +21,9 @@ import android.util.Log;
 
 public class RNImFlurryManagerModule extends ReactContextBaseJavaModule {
 
-  private static final String REACT_CLASS = "RNImFlurryManager";
+  private static final String REACT_CLASS = "RNImFlurryManagerModule";
 
+      private static final String kLogTag = "RNImFlurryManagerModule";
       private static final String ORIGIN_NAME = "react-native-im-flurry-manager";
       private static final String ORIGIN_VERSION = "1.0.0";
 
@@ -221,4 +222,49 @@ public class RNImFlurryManagerModule extends ReactContextBaseJavaModule {
 
           return result;
       }
+
+      ///////////// NativeViewAd
+      public static final int COMMAND_REFRESH = 1;
+
+          @ReactProp(name = "adSpaceName")
+          public void setTrackingView(RNImFlurryManagerModule view, String adSpaceName) {
+              view.setAdSpaceName(adSpaceName);
+          }
+
+          @Override
+          public RNImFlurryManagerModule createViewInstance(ThemedReactContext context) {
+              return new RNImFlurryManagerModule(context);
+          }
+
+          @Override
+          public void receiveCommand(RNImFlurryManagerModule view, int commandId, @Nullable ReadableArray args) {
+              switch (commandId) {
+                  case COMMAND_REFRESH: {
+                      view.refresh();
+                      return;
+                  }
+                  default:
+                      throw new IllegalArgumentException(String.format(
+                              "Unsupported command %d received by %s.",
+                              commandId,
+                              getClass().getSimpleName()));
+              }
+          }
+
+          @Override
+          public Map<String,Integer> getCommandsMap() {
+              Log.d("React"," View manager getCommandsMap:");
+              return MapBuilder.of("refresh",COMMAND_REFRESH);
+          }
+
+
+
+          @Override
+          public Map getExportedCustomBubblingEventTypeConstants() {
+              return MapBuilder.builder()
+                      .put("onFetchSuccess", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onFetchSuccess")))
+                      .put("onFetchFailure", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onFetchFailure")))
+                      .put("onReceivedClick", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onReceivedClick")))
+                      .build();
+          }
 }

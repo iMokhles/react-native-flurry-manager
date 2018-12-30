@@ -1,14 +1,48 @@
 
 #import "RNImFlurryManager.h"
+#import <React/RCTViewManager.h>
+#import <React/RCTBridge.h>
+#import <React/RCTUIManager.h>
 #import <Flurry.h>
+#import "RNImFlurryManagerNativeAdView.h"
 
 static NSString * const originName = @"react-native-im-flurry-manager";
 static NSString * const originVersion = @"1.0.0";
 
 
-@implementation RNImFlurryManager
+@implementation RNImFlurryManager {
+                                      RNImFlurryManagerNativeAdView* _RNImFlurryManagerNativeAdView;
+                                  }
+
+@synthesize bridge = _bridge;
 
 RCT_EXPORT_MODULE();
+
+- (UIView *)view
+{
+    _RNImFlurryManagerNativeAdView = [[RNImFlurryManagerNativeAdView alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
+    return _RNImFlurryManagerNativeAdView;
+}
+
+RCT_EXPORT_VIEW_PROPERTY(onFetchSuccess, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onReceivedClick, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onFetchError, RCTBubblingEventBlock)
+RCT_EXPORT_METHOD(refresh:(nonnull NSNumber *)reactTag) {
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
+        RNImFlurryManagerNativeAdView *view = viewRegistry[reactTag];
+        if (![view isKindOfClass:[RNImFlurryManagerNativeAdView class]]) {
+            RCTLogError(@"Invalid view returned from registry, expecting RNImFlurryManagerNativeAdView, got: %@", view);
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [view refresh];
+        });
+    }];
+}
+
+RCT_CUSTOM_VIEW_PROPERTY(adSpaceName, NSString*, RNImFlurryManagerNativeAdView)
+{
+    [view setAdSpaceName:json];
+}
 
 - (instancetype)init {
     self = [super init];
