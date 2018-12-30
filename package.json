@@ -1,0 +1,22 @@
+
+{
+  "name": "react-native-im-flurry-manager",
+  "version": "1.0.0",
+  "description": "React-Native wrapper for FlurrySDK",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native",
+    "flurrysdk",
+    "flurryads",
+    "flurry ads",
+    "flurry"
+  ],
+  "author": "iMokhles",
+  "license": "mokhleshussien@aol.com",
+  "peerDependencies": {
+    "react-native": "^0.41.2"
+  }
+}
